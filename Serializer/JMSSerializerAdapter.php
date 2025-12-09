@@ -42,8 +42,8 @@ final class JMSSerializerAdapter implements Serializer
 
     public function __construct(
         SerializerInterface $serializer,
-        SerializationContextFactoryInterface $serializationContextFactory = null,
-        DeserializationContextFactoryInterface $deserializationContextFactory = null
+        ?SerializationContextFactoryInterface $serializationContextFactory = null,
+        ?DeserializationContextFactoryInterface $deserializationContextFactory = null
     ) {
         $this->serializer = $serializer;
         $this->serializationContextFactory = $serializationContextFactory;

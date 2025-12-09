@@ -1,6 +1,6 @@
 imports:
     - { resource: ../config/default.yml }
-    - { resource: ../config/sensio_framework_extra.yml }
+    - { resource: ../config/sensio_framework_extra.php }
 
 framework:
     serializer: true
@@ -11,10 +11,6 @@ framework:
 fos_rest:
     body_converter:
         enabled: true
-
-sensio_framework_extra:
-    request:
-        converters: true
 
 twig:
     strict_variables: '%kernel.debug%'

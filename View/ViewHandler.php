@@ -58,7 +58,7 @@ final class ViewHandler implements ConfigurableViewHandlerInterface
         UrlGeneratorInterface $urlGenerator,
         Serializer $serializer,
         RequestStack $requestStack,
-        array $formats = null,
+        ?array $formats = null,
         int $failedValidationCode = Response::HTTP_BAD_REQUEST,
         int $emptyContentCode = Response::HTTP_NO_CONTENT,
         bool $serializeNull = false,
@@ -83,7 +83,7 @@ final class ViewHandler implements ConfigurableViewHandlerInterface
         UrlGeneratorInterface $urlGenerator,
         Serializer $serializer,
         RequestStack $requestStack,
-        array $formats = null,
+        ?array $formats = null,
         int $failedValidationCode = Response::HTTP_BAD_REQUEST,
         int $emptyContentCode = Response::HTTP_NO_CONTENT,
         bool $serializeNull = false,
@@ -137,7 +137,7 @@ final class ViewHandler implements ConfigurableViewHandlerInterface
      *
      * @throws UnsupportedMediaTypeHttpException
      */
-    public function handle(View $view, Request $request = null): Response
+    public function handle(View $view, ?Request $request = null): Response
     {
         if (null === $request) {
             $request = $this->requestStack->getCurrentRequest();

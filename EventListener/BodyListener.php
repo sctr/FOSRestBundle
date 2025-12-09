@@ -40,7 +40,7 @@ class BodyListener
     public function __construct(
         DecoderProviderInterface $decoderProvider,
         bool $throwExceptionOnUnsupportedContentType = false,
-        ArrayNormalizerInterface $arrayNormalizer = null,
+        ?ArrayNormalizerInterface $arrayNormalizer = null,
         bool $normalizeForms = false
     ) {
         $this->decoderProvider = $decoderProvider;

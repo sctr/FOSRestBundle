@@ -73,7 +73,7 @@ class ApiTokenGuardAuthenticator extends AbstractGuardAuthenticator
     /**
      * Called when authentication is needed, but it's not sent.
      */
-    public function start(Request $request, AuthenticationException $authException = null): Response
+    public function start(Request $request, ?AuthenticationException $authException = null): Response
     {
         $data = ['message' => 'Authentication Required'];
 

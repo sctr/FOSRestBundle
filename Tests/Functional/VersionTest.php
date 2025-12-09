@@ -21,6 +21,7 @@ class VersionTest extends WebTestCase
     public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
+
         static::$client = static::createClient(['test_case' => 'Version']);
     }
 

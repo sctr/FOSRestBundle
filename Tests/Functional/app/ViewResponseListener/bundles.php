@@ -9,9 +9,15 @@
  * file that was distributed with this source code.
  */
 
-return [
+$bundles = [
     new \Symfony\Bundle\FrameworkBundle\FrameworkBundle(),
-    new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
+    new \Symfony\Bundle\TwigBundle\TwigBundle(),
     new \FOS\RestBundle\FOSRestBundle(),
     new \FOS\RestBundle\Tests\Functional\Bundle\TestBundle\TestBundle(),
 ];
+
+if (class_exists(\Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle::class)) {
+    $bundles[] = new \Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle();
+}
+
+return $bundles;

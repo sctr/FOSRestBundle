@@ -18,12 +18,12 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @Annotation
  * @NamedArgumentConstructor
- * @Target("METHOD")
+ * @Target({"CLASS", "METHOD"})
  *
  * @author Jordi Boggiano <j.boggiano@seld.be>
  * @author Boris Guéry    <guery.b@gmail.com>
  */
-#[\Attribute(\Attribute::IS_REPEATABLE | \Attribute::TARGET_METHOD)]
+#[\Attribute(\Attribute::IS_REPEATABLE | \Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
 class RequestParam extends AbstractScalarParam
 {
     /** @var bool */

@@ -16,6 +16,7 @@ use FOS\RestBundle\Controller\Annotations\FileParam;
 use FOS\RestBundle\Controller\Annotations\QueryParam;
 use FOS\RestBundle\Controller\Annotations\RequestParam;
 use FOS\RestBundle\Request\ParamFetcherInterface;
+use FOS\RestBundle\Tests\Fixtures\Annotations\IdenticalToRequestParam;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,9 +29,15 @@ class ParamFetcherController extends AbstractFOSRestController
      * @RequestParam(name="raw", requirements=@IdenticalTo({"foo"="raw", "bar"="foo"}), default="invalid", strict=false)
      * @RequestParam(name="map", map=true, requirements=@IdenticalTo({"foo"="map", "foobar"="foo"}), default="%invalid2% %%", strict=false)
      * @RequestParam(name="bar", nullable=true, requirements="%bar%\ foo")
+     *
      * @QueryParam(name="foz", requirements="[a-z]+")
      * @QueryParam(name="baz", requirements="[a-z]+", incompatibles={"foz"})
      */
+    #[IdenticalToRequestParam(name: 'raw', identicalTo: ['value' => ['foo' => 'raw', 'bar' => 'foo']], default: 'invalid', strict: false)]
+    #[IdenticalToRequestParam(name: 'map', map: true, identicalTo: ['value' => ['foo' => 'map', 'foobar' => 'foo']], default: '%invalid2% %%', strict: false)]
+    #[RequestParam(name: 'bar', nullable: true, requirements: '%bar%\ foo')]
+    #[QueryParam(name: 'foz', requirements: '[a-z]+')]
+    #[QueryParam(name: 'baz', requirements: '[a-z]+', incompatibles: ['foz'])]
     public function paramsAction(ParamFetcherInterface $fetcher)
     {
         return new JsonResponse($fetcher->all());
@@ -38,8 +45,11 @@ class ParamFetcherController extends AbstractFOSRestController
 
     /**
      * @QueryParam(name="foo", default="invalid")
+     *
      * @RequestParam(name="bar", default="%foo%")
      */
+    #[QueryParam(name: 'foo', default: 'invalid')]
+    #[RequestParam(name: 'bar', default: '%foo%')]
     public function testAction(Request $request, ParamFetcherInterface $fetcher)
     {
         $paramsBefore = $fetcher->all();
@@ -61,6 +71,7 @@ class ParamFetcherController extends AbstractFOSRestController
     /**
      * @FileParam(name="single_file", strict=false, default="noFile")
      */
+    #[FileParam(name: 'single_file', strict: false, default: 'noFile')]
     public function singleFileAction(ParamFetcherInterface $fetcher)
     {
         /** @var UploadedFile $file */
@@ -74,6 +85,7 @@ class ParamFetcherController extends AbstractFOSRestController
     /**
      * @FileParam(name="array_files", map=true)
      */
+    #[FileParam(name: 'array_files', map: true)]
     public function fileCollectionAction(ParamFetcherInterface $fetcher)
     {
         $files = $fetcher->get('array_files');
@@ -89,6 +101,7 @@ class ParamFetcherController extends AbstractFOSRestController
     /**
      * @FileParam(name="array_images", image=true, strict=false, map=true, default="NotAnImage")
      */
+    #[FileParam(name: 'array_images', image: true, strict: false, map: true, default: 'NotAnImage')]
     public function imageCollectionAction(ParamFetcherInterface $fetcher)
     {
         $files = $fetcher->get('array_images');

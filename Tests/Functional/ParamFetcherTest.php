@@ -11,8 +11,8 @@
 
 namespace FOS\RestBundle\Tests\Functional;
 
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * @author Ener-Getick <egetick@gmail.com>
@@ -28,29 +28,26 @@ class ParamFetcherTest extends WebTestCase
         'foobar' => 'foo',
     ];
 
+    /**
+     * @var KernelBrowser
+     */
+    private $client;
+
     private function createUploadedFile($path, $originalName, $mimeType = null, $error = null, $test = false)
     {
-        $ref = new \ReflectionClass(UploadedFile::class);
-        $params = $ref->getConstructor()->getParameters();
+        return new UploadedFile(
+            $path,
+            $originalName,
+            $mimeType,
+            $error,
+            $test
+        );
+    }
 
-        if ('error' === $params[3]->getName()) {
-            // symfony 4 has removed the $size param
-            return new UploadedFile(
-                $path,
-                $originalName,
-                $mimeType,
-                $error,
-                $test
-            );
-        } else {
-            return new UploadedFile(
-                $path,
-                $originalName,
-                $mimeType,
-                filesize($path),
-                $error,
-                $test
-            );
+    public static function setUpBeforeClass(): void
+    {
+        if (PHP_MAJOR_VERSION === 8 && PHP_MINOR_VERSION === 0) {
+            self::markTestSkipped('Test fixture contains attributes not parsable on PHP 8.0.');
         }
     }
 
@@ -63,7 +60,10 @@ class ParamFetcherTest extends WebTestCase
     {
         $this->client->request('POST', '/params');
 
+        $this->assertTrue($this->client->getResponse()->isSuccessful(), 'The request resulted in an error.');
+
         $data = $this->getData();
+
         foreach (['raw' => 'invalid', 'map' => 'invalid2 %', 'bar' => null] as $key => $value) {
             $this->assertArrayHasKey($key, $data);
             $this->assertSame($value, $data[$key]);
@@ -73,6 +73,8 @@ class ParamFetcherTest extends WebTestCase
     public function testValidRawParameter()
     {
         $this->client->request('POST', '/params', ['raw' => $this->validRaw, 'map' => $this->validMap]);
+
+        $this->assertTrue($this->client->getResponse()->isSuccessful(), 'The request resulted in an error.');
 
         $data = $this->getData();
         foreach (['raw' => $this->validRaw, 'map' => 'invalid2 %', 'bar' => null] as $key => $value) {
@@ -87,7 +89,10 @@ class ParamFetcherTest extends WebTestCase
             'foo' => $this->validMap,
             'bar' => $this->validMap,
         ];
+
         $this->client->request('POST', '/params', ['raw' => 'bar', 'map' => $map, 'bar' => 'bar foo']);
+
+        $this->assertTrue($this->client->getResponse()->isSuccessful(), 'The request resulted in an error.');
 
         $data = $this->getData();
         foreach (['raw' => 'invalid', 'map' => $map, 'bar' => 'bar foo'] as $key => $value) {
@@ -99,6 +104,8 @@ class ParamFetcherTest extends WebTestCase
     public function testWithSubRequests()
     {
         $this->client->request('POST', '/params/test?foo=quz', ['raw' => $this->validRaw]);
+
+        $this->assertTrue($this->client->getResponse()->isSuccessful(), 'The request resulted in an error.');
 
         $expected = [
             'before' => ['foo' => 'quz', 'bar' => 'foo'],
@@ -116,12 +123,14 @@ class ParamFetcherTest extends WebTestCase
     {
         $image = $this->createUploadedFile(
             'Tests/Fixtures/Asset/cat.jpeg',
-            $singleFileName = 'cat.jpeg',
+            'cat.jpeg',
             'image/jpeg',
             7
         );
 
         $this->client->request('POST', '/file/test', [], ['single_file' => $image]);
+
+        $this->assertTrue($this->client->getResponse()->isSuccessful(), 'The request resulted in an error.');
 
         $this->assertEquals([
             'single_file' => 'noFile',
@@ -138,6 +147,8 @@ class ParamFetcherTest extends WebTestCase
 
         $this->client->request('POST', '/file/test', [], ['single_file' => $image]);
 
+        $this->assertTrue($this->client->getResponse()->isSuccessful(), 'The request resulted in an error.');
+
         $this->assertEquals([
             'single_file' => $singleFileName,
         ], $this->getData());
@@ -146,6 +157,8 @@ class ParamFetcherTest extends WebTestCase
     public function testFileParamNull()
     {
         $this->client->request('POST', '/file/test', [], []);
+
+        $this->assertTrue($this->client->getResponse()->isSuccessful(), 'The request resulted in an error.');
 
         $this->assertEquals([
             'single_file' => 'noFile',
@@ -169,6 +182,8 @@ class ParamFetcherTest extends WebTestCase
 
         $this->client->request('POST', '/file/collection/test', [], ['array_files' => $images]);
 
+        $this->assertTrue($this->client->getResponse()->isSuccessful(), 'The request resulted in an error.');
+
         $this->assertEquals([
             'array_files' => [$imageName, $txtName],
         ], $this->getData());
@@ -190,6 +205,8 @@ class ParamFetcherTest extends WebTestCase
         ];
 
         $this->client->request('POST', '/image/collection/test', [], ['array_images' => $images]);
+
+        $this->assertTrue($this->client->getResponse()->isSuccessful(), 'The request resulted in an error.');
 
         $this->assertEquals([
             'array_images' => [$imageName, $imageName2],
@@ -213,6 +230,8 @@ class ParamFetcherTest extends WebTestCase
 
         $this->client->request('POST', '/image/collection/test', [], ['array_images' => $images]);
 
+        $this->assertTrue($this->client->getResponse()->isSuccessful(), 'The request resulted in an error.');
+
         $this->assertEquals([
             'array_images' => 'NotAnImage',
         ], $this->getData());
@@ -221,6 +240,8 @@ class ParamFetcherTest extends WebTestCase
     public function testValidQueryParameter()
     {
         $this->client->request('POST', '/params?foz=val1');
+
+        $this->assertTrue($this->client->getResponse()->isSuccessful(), 'The request resulted in an error.');
 
         $data = $this->getData();
         foreach (['foz' => ''] as $key => $value) {
@@ -231,16 +252,10 @@ class ParamFetcherTest extends WebTestCase
 
     public function testIncompatibleQueryParameter()
     {
-        try {
-            $this->client->request('POST', '/params?foz=val1&baz=val2');
+        $this->client->request('POST', '/params?foz=val1&baz=val2');
 
-            // SF >= 4.4
-            $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
-            $this->assertStringContainsString('\\"baz\\" param is incompatible with foz param.', $this->client->getResponse()->getContent());
-        } catch (BadRequestHttpException $e) {
-            // SF < 4.4
-            $this->assertEquals('"baz" param is incompatible with foz param.', $e->getMessage());
-        }
+        $this->assertEquals(400, $this->client->getResponse()->getStatusCode());
+        $this->assertStringContainsString('\\"baz\\" param is incompatible with foz param.', $this->client->getResponse()->getContent());
     }
 
     protected function getData()

@@ -13,6 +13,7 @@ return (new PhpCsFixer\Config())
     ->setRules([
         'psr_autoloading' => true,
         'header_comment' => ['header' => $header],
+        'nullable_type_declaration_for_default_null_value' => true,
     ])
     ->setRiskyAllowed(true)
     ->setFinder(

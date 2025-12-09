@@ -11,8 +11,6 @@
 
 namespace FOS\RestBundle\Tests\Functional;
 
-use Symfony\Component\ErrorHandler\ErrorRenderer\SerializerErrorRenderer;
-
 /**
  * Test class for serialization errors and exceptions.
  *
@@ -38,10 +36,6 @@ class SerializerErrorTest extends WebTestCase
      */
     public function testSerializeExceptionJsonUsingErrorRenderer(string $testCase, array $expectedJson, string $expectedContentType)
     {
-        if (!class_exists(SerializerErrorRenderer::class)) {
-            $this->markTestSkipped();
-        }
-
         $this->iniSet('error_log', file_exists('/dev/null') ? '/dev/null' : 'nul');
 
         $client = $this->createClient(['test_case' => $testCase, 'debug' => false]);
@@ -79,10 +73,6 @@ class SerializerErrorTest extends WebTestCase
 
     public function testSerializeUnknownExceptionJsonWithDebugUsingErrorRenderer()
     {
-        if (!class_exists(SerializerErrorRenderer::class)) {
-            $this->markTestSkipped();
-        }
-
         $this->iniSet('error_log', file_exists('/dev/null') ? '/dev/null' : 'nul');
 
         $client = $this->createClient(['test_case' => 'FlattenExceptionNormalizerLegacyFormatDebug', 'debug' => false]);
@@ -93,10 +83,6 @@ class SerializerErrorTest extends WebTestCase
 
     public function testSerializeUnknownExceptionJsonWithoutDebugUsingErrorRenderer()
     {
-        if (!class_exists(SerializerErrorRenderer::class)) {
-            $this->markTestSkipped();
-        }
-
         $this->iniSet('error_log', file_exists('/dev/null') ? '/dev/null' : 'nul');
 
         $client = $this->createClient(['test_case' => 'FlattenExceptionNormalizerLegacyFormat', 'debug' => false]);
@@ -110,10 +96,6 @@ class SerializerErrorTest extends WebTestCase
      */
     public function testSerializeExceptionCodeMappedToResponseStatusCodeJsonUsingErrorRenderer(string $testCase, array $expectedJson)
     {
-        if (!class_exists(SerializerErrorRenderer::class)) {
-            $this->markTestSkipped();
-        }
-
         $this->iniSet('error_log', file_exists('/dev/null') ? '/dev/null' : 'nul');
 
         $client = $this->createClient(['test_case' => $testCase, 'debug' => false]);
@@ -124,10 +106,6 @@ class SerializerErrorTest extends WebTestCase
 
     public function testCustomExceptionSerialization()
     {
-        if (!class_exists(SerializerErrorRenderer::class)) {
-            $this->markTestSkipped();
-        }
-
         $this->iniSet('error_log', file_exists('/dev/null') ? '/dev/null' : 'nul');
 
         $client = $this->createClient(['test_case' => 'CustomFlattenExceptionNormalizer', 'debug' => false]);
@@ -182,10 +160,6 @@ class SerializerErrorTest extends WebTestCase
      */
     public function testSerializeExceptionXmlUsingErrorRenderer(string $testCase, string $expectedContent, string $expectedContentType)
     {
-        if (!class_exists(SerializerErrorRenderer::class)) {
-            $this->markTestSkipped();
-        }
-
         $this->iniSet('error_log', file_exists('/dev/null') ? '/dev/null' : 'nul');
 
         $client = $this->createClient(['test_case' => $testCase, 'debug' => false]);

@@ -35,4 +35,12 @@ class ViewResponseListenerTest extends WebTestCase
         $this->assertSame('http://localhost/hello/Post%201', $client->getResponse()->headers->get('location'));
         $this->assertStringNotContainsString('fooo', $client->getResponse()->getContent());
     }
+
+    public function testControllerReturnsView()
+    {
+        $client = $this->createClient(['test_case' => 'ViewResponseListener']);
+        $client->request('GET', '/articles.json');
+
+        $this->assertTrue($client->getResponse()->isSuccessful());
+    }
 }

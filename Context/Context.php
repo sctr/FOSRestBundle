@@ -111,7 +111,7 @@ final class Context
      *
      * @param string[]|null $groups
      */
-    public function setGroups(array $groups = null): self
+    public function setGroups(?array $groups = null): self
     {
         $this->groups = $groups;
 

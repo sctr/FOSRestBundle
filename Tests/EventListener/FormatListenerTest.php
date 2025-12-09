@@ -18,11 +18,10 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\ChainRequestMatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestMatcher;
+use Symfony\Component\HttpFoundation\RequestMatcherInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Symfony\Component\HttpKernel\Kernel;
 
 /**
  * Request listener test.
@@ -125,8 +124,8 @@ class FormatListenerTest extends TestCase
             ->will($this->returnValue($request));
 
         $event->expects($this->once())
-            ->method('getRequestType')
-            ->will($this->returnValue(HttpKernelInterface::MASTER_REQUEST));
+            ->method('isMainRequest')
+            ->will($this->returnValue(true));
 
         $requestStack = new RequestStack();
         $requestStack->push($request);
@@ -198,8 +197,8 @@ class FormatListenerTest extends TestCase
             ->will($this->returnValue($request));
 
         $event->expects($this->any())
-            ->method('getRequestType')
-            ->will($this->returnValue(HttpKernelInterface::MASTER_REQUEST));
+            ->method('isMainRequest')
+            ->will($this->returnValue(true));
 
         $requestStack = new RequestStack();
         $requestStack->push($request);
@@ -215,12 +214,12 @@ class FormatListenerTest extends TestCase
         $this->assertEquals($request->getRequestFormat(), 'json');
     }
 
-    private function getRequestMatcher(string $path)
+    private function getRequestMatcher(string $path): RequestMatcherInterface
     {
-        if (Kernel::VERSION_ID < 60200) {
-            return new RequestMatcher($path);
+        if (class_exists(ChainRequestMatcher::class)) {
+            return new ChainRequestMatcher([new RequestMatcher\PathRequestMatcher($path)]);
         }
 
-        return new ChainRequestMatcher([new RequestMatcher\PathRequestMatcher($path)]);
+        return new RequestMatcher($path);
     }
 }

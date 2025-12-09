@@ -34,7 +34,7 @@ final class SerializerErrorRenderer implements ErrorRendererInterface
      * @param string|callable(FlattenException) $format
      * @param string|bool                       $debug
      */
-    public function __construct(Serializer $serializer, $format, ErrorRendererInterface $fallbackErrorRenderer = null, $debug = false)
+    public function __construct(Serializer $serializer, $format, ?ErrorRendererInterface $fallbackErrorRenderer = null, $debug = false)
     {
         if (!is_string($format) && !is_callable($format)) {
             throw new \TypeError(sprintf('Argument 2 passed to "%s()" must be a string or a callable, "%s" given.', __METHOD__, \is_object($format) ? \get_class($format) : \gettype($format)));

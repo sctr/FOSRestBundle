@@ -41,7 +41,7 @@ final class RequestBodyParamConverter implements ParamConverterInterface
         Serializer $serializer,
         ?array $groups = null,
         ?string $version = null,
-        ValidatorInterface $validator = null,
+        ?ValidatorInterface $validator = null,
         ?string $validationErrorsArgument = null
     ) {
         $this->serializer = $serializer;

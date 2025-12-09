@@ -41,7 +41,7 @@ interface ViewHandlerInterface
      *
      * @return Response
      */
-    public function handle(View $view, Request $request = null);
+    public function handle(View $view, ?Request $request = null);
 
     /**
      * @return Response

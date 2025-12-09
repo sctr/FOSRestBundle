@@ -39,7 +39,7 @@ class FormErrorHandler implements SubscribingHandlerInterface
         return JMSFormErrorHandler::getSubscribingMethods();
     }
 
-    public function serializeFormToXml(XmlSerializationVisitor $visitor, Form $form, array $type, Context $context = null)
+    public function serializeFormToXml(XmlSerializationVisitor $visitor, Form $form, array $type, ?Context $context = null)
     {
         if ($context) {
             if ($context->hasAttribute('status_code')) {
@@ -72,7 +72,7 @@ class FormErrorHandler implements SubscribingHandlerInterface
         return $this->formErrorHandler->serializeFormToXml($visitor, $form, $type);
     }
 
-    public function serializeFormToJson(JsonSerializationVisitor $visitor, Form $form, array $type, Context $context = null)
+    public function serializeFormToJson(JsonSerializationVisitor $visitor, Form $form, array $type, ?Context $context = null)
     {
         $isRoot = !interface_exists(SerializationVisitorInterface::class) && null === $visitor->getRoot();
         $result = $this->adaptFormArray($this->formErrorHandler->serializeFormToJson($visitor, $form, $type), $context);
@@ -84,7 +84,7 @@ class FormErrorHandler implements SubscribingHandlerInterface
         return $result;
     }
 
-    public function serializeFormToYml(YamlSerializationVisitor $visitor, Form $form, array $type, Context $context = null)
+    public function serializeFormToYml(YamlSerializationVisitor $visitor, Form $form, array $type, ?Context $context = null)
     {
         $isRoot = null === $visitor->getRoot();
         $result = $this->adaptFormArray($this->formErrorHandler->serializeFormToYml($visitor, $form, $type), $context);
@@ -101,7 +101,7 @@ class FormErrorHandler implements SubscribingHandlerInterface
         return call_user_func_array([$this->formErrorHandler, $name], $arguments);
     }
 
-    private function adaptFormArray(\ArrayObject $serializedForm, Context $context = null)
+    private function adaptFormArray(\ArrayObject $serializedForm, ?Context $context = null)
     {
         $statusCode = $this->getStatusCode($context);
         if (null !== $statusCode) {
@@ -115,7 +115,7 @@ class FormErrorHandler implements SubscribingHandlerInterface
         return $serializedForm;
     }
 
-    private function getStatusCode(Context $context = null)
+    private function getStatusCode(?Context $context = null)
     {
         if (null === $context) {
             return;

@@ -22,11 +22,11 @@ use Symfony\Component\Validator\Constraints\Image;
  *
  * @Annotation
  * @NamedArgumentConstructor
- * @Target("METHOD")
+ * @Target({"CLASS", "METHOD"})
  *
  * @author Ener-Getick <egetick@gmail.com>
  */
-#[\Attribute(\Attribute::IS_REPEATABLE | \Attribute::TARGET_METHOD)]
+#[\Attribute(\Attribute::IS_REPEATABLE | \Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD)]
 class FileParam extends AbstractParam
 {
     /** @var bool */
